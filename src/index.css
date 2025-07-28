@@ -2,41 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Cyber Assistant - Hacker themed design system
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Cyber/Hacker Dark Theme */
+    --background: 220 30% 5%;
+    --foreground: 120 100% 85%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 220 25% 8%;
+    --card-foreground: 120 100% 85%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 220 25% 8%;
+    --popover-foreground: 120 100% 85%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 120 100% 50%;
+    --primary-foreground: 220 30% 5%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 195 100% 50%;
+    --secondary-foreground: 220 30% 5%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 20% 15%;
+    --muted-foreground: 120 30% 60%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 285 100% 60%;
+    --accent-foreground: 220 30% 5%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 220 30% 5%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 120 30% 20%;
+    --input: 220 20% 12%;
+    --ring: 120 100% 50%;
 
     --radius: 0.5rem;
+
+    /* Cyber effects */
+    --glow-primary: 120 100% 50%;
+    --glow-secondary: 195 100% 50%;
+    --glow-accent: 285 100% 60%;
+    
+    /* Terminal colors */
+    --terminal-bg: 220 30% 3%;
+    --terminal-text: 120 100% 70%;
+    --terminal-prompt: 120 100% 85%;
+    --terminal-cursor: 120 100% 90%;
+
+    /* Gradients */
+    --gradient-cyber: linear-gradient(135deg, hsl(120 100% 30%), hsl(195 100% 40%));
+    --gradient-dark: linear-gradient(180deg, hsl(220 30% 5%), hsl(220 30% 8%));
+    --gradient-glow: radial-gradient(circle, hsl(120 100% 50% / 0.2), transparent);
+
+    /* Shadows */
+    --shadow-neon: 0 0 20px hsl(120 100% 50% / 0.5);
+    --shadow-cyber: 0 10px 30px hsl(120 100% 50% / 0.3);
+    --shadow-terminal: inset 0 0 50px hsl(120 100% 50% / 0.1);
+
+    /* Animations */
+    --transition-glow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-cyber: all 0.2s ease-out;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +126,81 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-mono;
+  }
+}
+
+@layer components {
+  /* Cyber button variants */
+  .btn-cyber {
+    @apply bg-card border border-primary text-primary font-mono px-6 py-3 
+           transition-all duration-300 hover:bg-primary hover:text-primary-foreground
+           hover:shadow-[0_0_20px_hsl(var(--glow-primary))] 
+           focus:outline-none focus:ring-2 focus:ring-primary;
+  }
+
+  .btn-secondary-cyber {
+    @apply bg-card border border-secondary text-secondary font-mono px-6 py-3 
+           transition-all duration-300 hover:bg-secondary hover:text-secondary-foreground
+           hover:shadow-[0_0_20px_hsl(var(--glow-secondary))];
+  }
+
+  .btn-accent-cyber {
+    @apply bg-card border border-accent text-accent font-mono px-6 py-3 
+           transition-all duration-300 hover:bg-accent hover:text-accent-foreground
+           hover:shadow-[0_0_20px_hsl(var(--glow-accent))];
+  }
+
+  /* Terminal styles */
+  .terminal {
+    @apply bg-[hsl(var(--terminal-bg))] border border-primary rounded-lg p-4 font-mono text-sm
+           shadow-[inset_0_0_50px_hsl(var(--glow-primary)_/_0.1)];
+  }
+
+  .terminal-text {
+    @apply text-[hsl(var(--terminal-text))];
+  }
+
+  .terminal-prompt {
+    @apply text-[hsl(var(--terminal-prompt))] font-bold;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    @apply shadow-[0_0_20px_hsl(var(--glow-primary)_/_0.5)];
+  }
+
+  .glow-secondary {
+    @apply shadow-[0_0_20px_hsl(var(--glow-secondary)_/_0.5)];
+  }
+
+  .glow-accent {
+    @apply shadow-[0_0_20px_hsl(var(--glow-accent)_/_0.5)];
+  }
+
+  /* Cyber grid background */
+  .cyber-grid {
+    background-image: 
+      linear-gradient(rgba(0, 255, 0, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Typing animation */
+  .typing-cursor {
+    @apply inline-block w-2 h-5 bg-[hsl(var(--terminal-cursor))] animate-pulse;
+  }
+
+  /* Neon text */
+  .neon-text {
+    @apply text-primary;
+    text-shadow: 0 0 10px hsl(var(--glow-primary));
+  }
+
+  /* Cyber card */
+  .cyber-card {
+    @apply bg-card border border-primary/30 rounded-lg p-6 
+           hover:border-primary hover:shadow-[0_0_20px_hsl(var(--glow-primary)_/_0.3)]
+           transition-all duration-300;
   }
 }
