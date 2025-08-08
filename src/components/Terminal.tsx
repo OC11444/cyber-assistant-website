@@ -9,6 +9,12 @@ interface Command {
   timestamp: string;
 }
 
+interface DemoLog {
+  user: string;
+  timestamp: string;
+  command: string;
+}
+
 const Terminal = () => {
   const [input, setInput] = useState("");
   const [commands, setCommands] = useState<Command[]>([]);
@@ -16,22 +22,48 @@ const Terminal = () => {
   const [isDemoMode, setIsDemoMode] = useState(true);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [demoLogs, setDemoLogs] = useState<DemoLog[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
 
   // Mock responses for demo mode
   const mockResponses: { [key: string]: string } = {
     "nmap 127.0.0.1": `
-Starting Nmap 7.94 ( https://nmap.org )
+Starting Nmap 7.80 ( https://nmap.org ) at 2025-08-08 10:00
 Nmap scan report for localhost (127.0.0.1)
-Host is up (0.000070s latency).
+Host is up (0.00012s latency).
 Not shown: 997 closed ports
-PORT     STATE SERVICE
-22/tcp   open  ssh
-80/tcp   open  http
-443/tcp  open  https
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+443/tcp open  https
+MAC Address: 00:0C:29:68:22:16 (VMware)
 
 Nmap done: 1 IP address (1 host up) scanned in 1.23 seconds`,
+    
+    "whoami": "jamesnjenga",
+    
+    "ls -la": `
+total 44
+drwxr-xr-x  6 jamesnjenga jamesnjenga 4096 Aug  8 10:00 .
+drwxr-xr-x  3 root       root       4096 Aug  7 15:00 ..
+-rw-r--r--  1 jamesnjenga jamesnjenga  220 Apr  4  2024 .bash_logout
+-rw-r--r--  1 jamesnjenga jamesnjenga 3771 Apr  4  2024 .bashrc
+drwx------  2 jamesnjenga jamesnjenga 4096 Aug  8 10:00 .cache
+-rw-r--r--  1 jamesnjenga jamesnjenga  807 Apr  4  2024 .profile
+-rw-r--r--  1 jamesnjenga jamesnjenga    0 Aug  8 09:59 demo.txt`,
+
+    "sudo apt update": `
+Hit:1 http://archive.ubuntu.com/ubuntu focal InRelease
+Get:2 http://archive.ubuntu.com/ubuntu focal-updates InRelease [111 kB]
+Fetched 111 kB in 1s (120 kB/s)
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+All packages are up to date.`,
+
+    'echo "Hello World"': "Hello World",
+    "echo Hello World": "Hello World",
     
     "help": `
 Cyber Assistant v1.0 - Available Commands:
@@ -39,6 +71,10 @@ Cyber Assistant v1.0 - Available Commands:
 │ nmap [target]      - Network mapping       │
 │ scan [options]     - Vulnerability scan    │
 │ exploit [target]   - Exploit analysis      │
+│ whoami             - Current user          │
+│ ls -la             - List files            │
+│ sudo apt update    - Update packages       │
+│ echo [text]        - Echo text             │
 │ report             - Generate report       │
 │ clear              - Clear terminal        │
 │ help               - Show this help        │
@@ -56,11 +92,29 @@ Cyber Assistant v1.0 - Available Commands:
     
 Scan completed in 3.47 seconds`,
 
-    "whoami": "cyber_assistant@hackathon:~$",
     "clear": "",
     "ls": "cyber_tools/  reports/  exploits/  README.md",
-    "pwd": "/home/cyber_assistant",
+    "pwd": "/home/jamesnjenga",
+    "date": new Date().toString(),
+    "ps aux": `
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.1  22520  1234 ?        Ss   09:00   0:01 /sbin/init
+jamesnjenga  1337  0.5  2.1  45234  8765 pts/0 S+   10:00   0:02 cyber-assistant`,
   };
+
+  // Initialize demo logs
+  useEffect(() => {
+    const initialLogs: DemoLog[] = [
+      { user: "jamesnjenga", timestamp: "2025-08-08 09:45:12", command: "nmap 192.168.1.1" },
+      { user: "wisdom", timestamp: "2025-08-08 09:50:33", command: "scan --ports" },
+      { user: "hacker_01", timestamp: "2025-08-08 09:55:44", command: "whoami" },
+      { user: "jamesnjenga", timestamp: "2025-08-08 09:58:15", command: "ls -la" },
+      { user: "cyber_expert", timestamp: "2025-08-08 10:01:22", command: "sudo apt update" },
+      { user: "wisdom", timestamp: "2025-08-08 10:03:45", command: "nmap 127.0.0.1" },
+      { user: "ethical_hacker", timestamp: "2025-08-08 10:05:11", command: "scan --vuln" },
+    ];
+    setDemoLogs(initialLogs);
+  }, []);
 
   // Play sound effects
   const playSound = (type: 'click' | 'type' | 'error') => {
@@ -116,6 +170,22 @@ Scan completed in 3.47 seconds`,
     
     setCommands(prev => [...prev, newCommand]);
 
+    // Add to demo logs
+    const newLog: DemoLog = {
+      user: "jamesnjenga",
+      timestamp: new Date().toLocaleString('en-US', { 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit',
+        hour12: false 
+      }).replace(/(\d{4})\/(\d{2})\/(\d{2}),\s(\d{2}:\d{2}:\d{2})/, '$1-$2-$3 $4'),
+      command: commandInput
+    };
+    setDemoLogs(prev => [newLog, ...prev.slice(0, 9)]); // Keep only last 10 logs
+
     // Type out the response character by character
     for (let i = 0; i <= response.length; i++) {
       await new Promise(resolve => setTimeout(resolve, 20));
@@ -140,7 +210,7 @@ Scan completed in 3.47 seconds`,
 
     if (isDemoMode) {
       const response = mockResponses[input.toLowerCase()] || 
-        `Command '${input}' not recognized. Type 'help' for available commands.`;
+        "Command not recognized. Please try another command.";
       await typeResponse(response, input);
     } else {
       // Live mode - show download/cloud info
@@ -173,7 +243,7 @@ Note: Live mode requires proper authentication and ethical use compliance.`;
 
   return (
     <section className="py-20 px-6" data-section="terminal">
-      <div className="container mx-auto max-w-6xl">
+      <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-8">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary">
             Interactive Terminal
@@ -229,8 +299,11 @@ Note: Live mode requires proper authentication and ethical use compliance.`;
           </div>
         </div>
 
-        {/* Terminal Window */}
-        <div className="terminal max-h-96 overflow-y-auto" ref={terminalRef} onClick={handleTerminalClick}>
+        {/* Main Content - Terminal and Demo Logs Side by Side */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Terminal Window */}
+          <div className="xl:col-span-2">
+            <div className="terminal max-h-96 overflow-y-auto" ref={terminalRef} onClick={handleTerminalClick}>
           {/* Terminal Header */}
           <div className="flex items-center justify-between border-b border-primary/30 pb-2 mb-4">
             <div className="flex items-center gap-2">
@@ -288,13 +361,46 @@ Note: Live mode requires proper authentication and ethical use compliance.`;
               </div>
             </div>
           )}
+            </div>
+          </div>
+
+          {/* Demo Logs Panel */}
+          <div className="xl:col-span-1">
+            <div className="cyber-card h-96">
+              <div className="flex items-center justify-between border-b border-primary/30 pb-3 mb-4">
+                <h3 className="text-lg font-semibold text-primary">Demo Logs</h3>
+                <span className="text-xs text-muted-foreground">Recent Commands</span>
+              </div>
+              
+              <div className="space-y-2 overflow-y-auto max-h-80">
+                {demoLogs.map((log, index) => (
+                  <div key={index} className="border border-muted/30 rounded-lg p-3 bg-card/50 hover:bg-card/70 transition-colors animate-fade-in">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-secondary">{log.user}</span>
+                      <span className="text-xs text-muted-foreground">{log.timestamp.split(' ')[1]}</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground mb-1">{log.timestamp.split(' ')[0]}</div>
+                    <div className="terminal-text text-sm bg-background/50 rounded px-2 py-1">
+                      $ {log.command}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {demoLogs.length === 0 && (
+                <div className="text-center text-muted-foreground text-sm py-8">
+                  No commands executed yet
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Quick Commands */}
-        <div className="mt-6">
+        <div className="mt-8">
           <p className="text-sm text-muted-foreground mb-3 text-center">Quick Commands:</p>
           <div className="flex flex-wrap justify-center gap-2">
-            {['help', 'nmap 127.0.0.1', 'scan --ports', 'whoami', 'clear'].map((cmd) => (
+            {['help', 'nmap 127.0.0.1', 'whoami', 'ls -la', 'sudo apt update', 'echo "Hello World"', 'clear'].map((cmd) => (
               <button
                 key={cmd}
                 onClick={() => {
