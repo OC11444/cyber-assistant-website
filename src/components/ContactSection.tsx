@@ -1,4 +1,4 @@
-import { Mail, Github, Linkedin, MapPin, Heart } from "lucide-react";
+import { Mail, Github, Linkedin, MapPin, Heart, MessageCircle } from "lucide-react";
 
 const ContactSection = () => {
   const contacts = [
@@ -6,8 +6,9 @@ const ContactSection = () => {
       name: "James Njenga",
       role: "Lead Developer",
       email: "james.njenga@cyberassistant.dev",
-      github: "https://github.com/james-njenga",
+      github: "https://github.com/OC11444",
       linkedin: "https://linkedin.com/in/james-njenga",
+      discord: "@james_oc11444",
       avatar: "JN"
     },
     {
@@ -81,6 +82,21 @@ const ContactSection = () => {
                     LinkedIn Profile
                   </span>
                 </a>
+
+                {/* Discord (only for James) */}
+                {contact.discord && (
+                  <a 
+                    href={`https://discord.com/users/${contact.discord.replace('@', '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-purple-500/30 hover:border-purple-500 hover:bg-purple-500/10 transition-all duration-300 group"
+                  >
+                    <MessageCircle className="w-5 h-5 text-purple-500 group-hover:text-purple-400" />
+                    <span className="text-sm text-muted-foreground group-hover:text-foreground">
+                      Discord: {contact.discord}
+                    </span>
+                  </a>
+                )}
               </div>
             </div>
           ))}

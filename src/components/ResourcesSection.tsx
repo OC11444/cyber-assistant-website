@@ -3,44 +3,48 @@ import { ExternalLink, Download, Github, Youtube, Cloud, BookOpen } from "lucide
 const ResourcesSection = () => {
   const resources = [
     {
-      title: "🐳 Docker Image",
-      description: "Pull and run the complete Cyber Assistant environment",
-      link: "https://hub.docker.com/r/cyberassistant/latest",
+      title: "🐳 Docker Image Download",
+      description: "Download Docker image locally (Coming Soon)",
+      link: "#",
       icon: Download,
       color: "primary",
-      command: "docker pull cyberassistant/latest"
+      command: "docker pull cyberassistant/latest",
+      placeholder: true
     },
     {
       title: "🧑‍💻 GitHub Repository",
       description: "Source code, documentation, and contribution guidelines",
-      link: "https://github.com/james-njenga/cyber-assistant",
+      link: "https://github.com/OC11444/cyber-security-agent",
       icon: Github,
       color: "secondary",
-      command: "git clone https://github.com/james-njenga/cyber-assistant.git"
+      command: "git clone https://github.com/OC11444/cyber-security-agent.git"
     },
     {
-      title: "🎥 Demo Videos",
-      description: "Watch tutorials and feature demonstrations",
-      link: "https://youtube.com/playlist?list=PLcyber-assistant-demos",
+      title: "🎥 Demo & Pitch Videos",
+      description: "Watch tutorials and feature demonstrations (Coming Soon)",
+      link: "#",
       icon: Youtube,
       color: "accent",
-      command: "# Watch our latest tutorials"
+      command: "# Watch our latest tutorials",
+      placeholder: true
     },
     {
-      title: "☁️ Cloud Instance",
-      description: "Try Cyber Assistant in the cloud without installation",
-      link: "https://cloud.cyberassistant.io",
+      title: "☁️ Docker Cloud Instance",
+      description: "Run instantly in the cloud (Coming Soon)",
+      link: "#",
       icon: Cloud,
       color: "primary",
-      command: "# No installation required"
+      command: "# No installation required",
+      placeholder: true
     },
     {
       title: "📚 Documentation",
-      description: "Complete API reference and user guides",
-      link: "https://docs.cyberassistant.io",
+      description: "Complete API reference and user guides (Coming Soon)",
+      link: "#",
       icon: BookOpen,
       color: "secondary",
-      command: "# Learn how to use all features"
+      command: "# Learn how to use all features",
+      placeholder: true
     }
   ];
 
@@ -85,15 +89,24 @@ const ResourcesSection = () => {
                 </div>
 
                 {/* Action Button */}
-                <a
-                  href={resource.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`inline-flex items-center gap-2 w-full justify-center py-3 px-4 border rounded-lg font-mono text-sm transition-all duration-300 ${colorClasses[resource.color as keyof typeof colorClasses]}`}
-                >
-                  Access Resource
-                  <ExternalLink className="w-4 h-4" />
-                </a>
+                {resource.placeholder ? (
+                  <div className="inline-flex items-center gap-2 w-full justify-center py-3 px-4 border rounded-lg font-mono text-sm bg-muted/50 text-muted-foreground cursor-not-allowed">
+                    Coming Soon
+                    <span className="text-xs bg-yellow-400/20 text-yellow-400 px-2 py-1 rounded ml-2">
+                      Placeholder
+                    </span>
+                  </div>
+                ) : (
+                  <a
+                    href={resource.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex items-center gap-2 w-full justify-center py-3 px-4 border rounded-lg font-mono text-sm transition-all duration-300 ${colorClasses[resource.color as keyof typeof colorClasses]}`}
+                  >
+                    Access Resource
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
               </div>
             );
           })}

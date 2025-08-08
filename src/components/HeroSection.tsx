@@ -21,9 +21,16 @@ const HeroSection = () => {
         <h1 className="text-5xl md:text-7xl font-bold mb-6 neon-text">
           Cyber Assistant
         </h1>
-        <p className="text-xl md:text-2xl text-secondary mb-8">
+        <p className="text-xl md:text-2xl text-secondary mb-6">
           Terminal AI for Ethical Hackers
         </p>
+        
+        {/* Track Badge */}
+        <div className="mb-8">
+          <span className="inline-flex items-center px-4 py-2 rounded-full bg-primary/20 border border-primary/40 text-primary text-sm font-medium glow-primary">
+            🏆 IICC Hub Key Track AI Decentralized
+          </span>
+        </div>
 
         {/* Team Section */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-12">
